@@ -6,6 +6,7 @@ from ..Models.billFetchStatus import billFetchStatus
 from ..Models.billDetails import billDetails
 from ..Models.responseStatus import reseponseStatus
 from ..Models.customerModel import customerModel
+from flask import jsonify
 
 class billingService(BaseService):
 
@@ -49,8 +50,10 @@ class billingService(BaseService):
                 details["bills"] = []
             else:
                 details["billFetchStatus"] = billFetchStatus.AVAILABLE
-                bill_obj = billDetails(bill_details.id, bill_details.amount , bill_details.date_created, bill_details.exactness.name , bill_details.recurrence.name)
-                details["bills"] = bill_obj.generate_bill_response_obj()
+
+                bill_obj = billDetails(bill_details.id, bill_details.amount, bill_details.date_created, customer.mobile_number , bill_details.recurrence.name, bill_details.exactness.name)
+                print(bill_obj.generate_bill_response_obj())
+                details["bills"] =  [ bill_obj.generate_bill_response_obj() ]
 
             bill_details_obj["billDetails"] = details
 

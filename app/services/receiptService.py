@@ -25,14 +25,13 @@ class receiptService(BaseService):
         new_receipt = None
         with self.app.app_context():
             new_receipt = Receipt(bill_id=bill_details.id, platform_id= platform_id, transaction_id = tran_id, payment_id = payment_id , amount = bill_details.amount, bill_generated_date = bill_details.date_created)
-            print("new receipt", new_receipt)
             db.session.add(new_receipt)
             db.session.commit()
             id = new_receipt.id
         
         self.billingService.set_bill_unavailable(bill_details.id)
 
-        receipt_obj = receiptDetails(id, bill_details.id , platform_id, new_receipt.create_date)
+        receipt_obj = receiptDetails(id, bill_details.id , platform_id, new_receipt.create_date, tran_id )
         receipt_details_obj = receipt_obj.generate_receipt()
         response = {}
         response["status"] = reseponseStatus.SUCCESS
