@@ -1,0 +1,4 @@
+class billFetchStatus:
+
+    NO_OUTSTANDING = "NO_OUTSTANDING"
+    AVAILABLE = "AVAILABLE"
