@@ -13,6 +13,7 @@ class Bills(Base):
     amount = db.Column(db.Float, nullable=False)
     exactness = db.Column(db.Enum(ExactnessType), default=ExactnessType.EXACT)
     recurrence = db.Column(db.Enum(Recurrence),  default=Recurrence.ONE_TIME)
+    available = db.Column(db.Boolean, default=True)
 
     def save_to_db(self):
         db.session.add(self)

@@ -6,31 +6,45 @@ from flask_jwt_extended import (jwt_required)
 BillsController = Blueprint('bills_controller', __name__)
 billingService = billingService(current_app)
 
+def validateData(data):
+    try:
+        return ( data != None and
+            data['customerIdentifiers'] != None and
+            data['customerIdentifiers'][0] != None and
+            data['customerIdentifiers'][0]['attributeName'] == 'mobileNumber' and 
+            data['customerIdentifiers'][0]['attributeValue'] != None
+        )
+    except Exception:
+        return False
+
 @BillsController.route("/bills/fetch", methods=['POST'])
 @jwt_required
 def get_bill():
+    responseHandlerObj = responseHandler()
+    
     try:
         data = request.json
-        print("data", data)
+        
+        if not validateData(data):
+            return responseHandlerObj.returnResponse({"error": "Bad request. Data not correct", "status": reseponseStatus.BAD_REQUEST })
+
         mobile_number = data['customerIdentifiers'][0]['attributeValue']
         customer_id = billingService.get_customer_id(mobile_number)
+        
         if customer_id == None:
-            response = {"error":"customer not found", "status": reseponseStatus.FALIURE}
+            response = {"error":"customer not found", "status": reseponseStatus.NOT_FOUND}
         else:
             response = billingService.get_bill_using_customer_id(customer_id)
-        print("response", response)
-        responseHandlerObj = responseHandler()
+
         return responseHandlerObj.returnResponse(response)
 
     except Exception as e:
-        return make_response(jsonify({'error': 'Something went wrong in generating bill'}), 400)
-
+        return responseHandlerObj.returnResponse({"error": "Something went wrong", "status": reseponseStatus.FALIURE })
 
 @BillsController.route("/bills/add", methods=['POST'])
 def add_bill():
     try:
         data = request.json
-        print("data", data)
         mobile_number = data['mobile_number']
         bill_amount = data['amount']
         customer_id = billingService.get_customer_id(mobile_number)

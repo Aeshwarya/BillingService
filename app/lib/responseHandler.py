@@ -9,13 +9,21 @@ class responseHandler():
 
         if response["status"] == reseponseStatus.SUCCESS:
             return self.returnSuccessFullResponse(response["message"])
-        else:
-            return self.returnFaliureResponse(response['error'])
+        elif response["status"] == reseponseStatus.NOT_FOUND:
+            return self.returnNotFoundResponse(response['error'])
+        elif response["status"] == reseponseStatus.BAD_REQUEST:
+            return self.returnBadRequestResponse(response['error'])
+        elif response["status"] == reseponseStatus.FALIURE:
+            return self.returnErrorResponse(response['error'])
 
     def returnSuccessFullResponse(self, responseMessage):
-        print("here")
-        return make_response(jsonify({"data": responseMessage, "status":200, "success": True}))
+        return make_response(jsonify({"data": responseMessage, "status":200, "success": True}), 200)
 
-    def returnFaliureResponse(self, reseponseMessage):
+    def returnNotFoundResponse(self, reseponseMessage):
+        return make_response(jsonify({"error": reseponseMessage , "status":404, "success": False}), 404)
 
-        return make_response(jsonify({"error": reseponseMessage , "status":404, "success": False}))
+    def returnErrorResponse(self, reseponseMessage):
+        return make_response(jsonify({"error": reseponseMessage , "status":500, "success": False}), 500)
+
+    def returnBadRequestResponse(self, reseponseMessage):
+        return make_response(jsonify({"error": reseponseMessage , "status":400, "success": False}), 400)
