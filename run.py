@@ -4,5 +4,5 @@ import config
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 application=create_app(os.path.join(BASE_DIR, 'config.py'))
-application.run(port=config.PORT)
+application.run(host='0.0.0.0' ,port=config.PORT)
 
